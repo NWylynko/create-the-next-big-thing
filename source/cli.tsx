@@ -1,25 +1,27 @@
 #!/usr/bin/env node
-import React from 'react';
-import {render} from 'ink';
-import meow from 'meow';
-import App from './ui';
+import React from "react";
+import { render } from "ink";
+import meow from "meow";
+import App from "./ui";
 
-const cli = meow(`
-	Usage
-	  $ create-the-next-big-thing
+const helpText = `
+Usage
+	$ create-the-next-big-thing
 
-	Options
-		--name  Your name
+Options
+	--name  Your name
 
-	Examples
-	  $ create-the-next-big-thing --name=Jane
-	  Hello, Jane
-`, {
+Examples
+	$ create-the-next-big-thing --name=Jane
+	Hello, Jane
+`;
+
+const cli = meow(helpText, {
 	flags: {
 		name: {
-			type: 'string'
-		}
-	}
+			type: "string",
+		},
+	},
 });
 
-render(<App name={cli.flags.name}/>);
+render(<App name={cli.flags.name} />);
