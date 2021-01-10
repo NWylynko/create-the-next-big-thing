@@ -8,8 +8,8 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"start": "npm run build && dist/cli.js",
-		"pretest": "npm run build",
+		"start": "dist/cli.js",
+		"pretest": "yarn build",
 		"test": "xo && ava"
 	},
 	"files": [
