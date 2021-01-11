@@ -1,0 +1,19 @@
+[{
+		"name": "NPM",
+		"cli": "npm",
+		"use": {
+			"add": ["install"],
+			"add-dev": ["install", "--save-dev"],
+			"init": ["init"]
+		}
+	},
+	{
+		"name": "Yarn",
+		"cli": "yarn",
+		"use": {
+			"add": ["add"],
+			"add-dev": ["add", "--dev"],
+			"init": ["init"]
+		}
+	}
+]
