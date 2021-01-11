@@ -20,17 +20,17 @@ export const SelectPackageManager = ({ onSubmit }: Props) => {
 			const packageManagersWithAvailability = await Promise.all(
 				packageManagers.map(async (packageManager) => ({
 					...packageManager,
-					isAvailable: await isAvailable(packageManager.cli),
+					isAvailable: await isAvailable(packageManager.name),
 				}))
 			);
 
 			let i: ListedItem[] = [];
 
-			packageManagersWithAvailability.forEach(({ isAvailable, name, cli }) => {
+			packageManagersWithAvailability.forEach(({ isAvailable, label, name }) => {
 				if (isAvailable) {
 					i.push({
-						label: `${name}`,
-						value: cli,
+						label,
+						value: name,
 					});
 				}
 			});

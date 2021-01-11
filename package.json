@@ -15,7 +15,7 @@
 		"test": "xo && ava"
 	},
 	"files": [
-		"dist/cli.js"
+		"dist"
 	],
 	"dependencies": {
 		"ink": "^3.0.8",

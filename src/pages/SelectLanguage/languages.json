@@ -1,0 +1,12 @@
+[{
+		"label": "Javascript",
+		"name": "javascript"
+	},
+	{
+		"label": "Typescript",
+		"name": "typescript",
+		"devDependencies": [
+			"typescript"
+		]
+	}
+]

@@ -3,7 +3,7 @@ import "source-map-support/register";
 import React from "react";
 import { render } from "ink";
 import meow from "meow";
-import App from "./app";
+import Index from "./index";
 
 const helpText = `
 Usage
@@ -35,4 +35,4 @@ const cli = meow(helpText, {
 	},
 });
 
-render(<App {...cli.flags} />);
+render(<Index {...cli.flags} />);

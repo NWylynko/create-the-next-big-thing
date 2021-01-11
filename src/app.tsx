@@ -2,25 +2,29 @@ import React, { useState } from "react";
 import { Text, Box } from "ink";
 import { ListedItem } from "ink-multi-select";
 
+import { Route, usePage } from "./PageManager";
+
 import SelectPackageManager from "./pages/SelectPackageManager";
 import InputProjectName from "./pages/InputProjectName";
+import SelectLanguage from "./pages/SelectLanguage";
+import SelectTarget from "./pages/SelectTarget";
 
-interface Props {
+export interface AppProps {
 	javascript?: boolean;
 	typescript?: boolean;
 	npm?: boolean;
 	yarn?: boolean;
 }
 
-const App = (_props: Props) => {
-	const [pageCounter, setPageCounter] = useState(0);
-
-	const nextPage = () => setPageCounter((s) => s + 1);
+const App = (_props: AppProps) => {
+	const { setLocation } = usePage();
 
 	const [projectName, setProjectName] = useState<string>();
 	const [packageManager, setPackageManger] = useState<ListedItem>();
+	const [target, setTarget] = useState<ListedItem>();
+	const [language, setLanguage] = useState<ListedItem>();
 
-	const values = [projectName, packageManager?.label];
+	const values = [projectName, packageManager?.label, target?.label, language?.label];
 
 	return (
 		<>
@@ -28,22 +32,33 @@ const App = (_props: Props) => {
 				<Text color="green"> / </Text>
 				<BreadCrumbs values={values} />
 			</Box>
-			{pageCounter === 0 && (
+			<Route path="project-name">
 				<InputProjectName
 					onSubmit={(name) => {
 						setProjectName(name);
-						nextPage();
+						setLocation("package-manager");
 					}}
 				/>
-			)}
-			{pageCounter === 1 && (
+			</Route>
+			<Route path="package-manager">
 				<SelectPackageManager
 					onSubmit={(pm) => {
 						setPackageManger(pm);
-						nextPage();
+						setLocation('target');
 					}}
 				/>
-			)}
+			</Route>
+			<Route path="target">
+				<SelectTarget onSubmit={(target) => {
+					setTarget(target);
+					setLocation('language');
+				}}/>
+			</Route>
+			<Route path="language">
+				<SelectLanguage onSubmit={(lang) => {
+					setLanguage(lang)
+				}} />
+			</Route>
 		</>
 	);
 };

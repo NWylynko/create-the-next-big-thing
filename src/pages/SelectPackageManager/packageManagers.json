@@ -1,6 +1,6 @@
 [{
-		"name": "NPM",
-		"cli": "npm",
+		"label": "NPM",
+		"name": "npm",
 		"use": {
 			"add": ["install"],
 			"add-dev": ["install", "--save-dev"],
@@ -8,8 +8,8 @@
 		}
 	},
 	{
-		"name": "Yarn",
-		"cli": "yarn",
+		"label": "Yarn",
+		"name": "yarn",
 		"use": {
 			"add": ["add"],
 			"add-dev": ["add", "--dev"],
