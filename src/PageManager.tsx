@@ -1,10 +1,11 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 
-const store = {
-	location: "/",
-};
+interface Store {
+	location: string;
+	setLocation: React.Dispatch<React.SetStateAction<string>>;
+}
 
-const StoreContext = createContext(store);
+const StoreContext = createContext({} as Store);
 export default StoreContext;
 
 interface StoreProviderProps {
@@ -14,6 +15,13 @@ interface StoreProviderProps {
 export const StoreProvider = ({
 	children,
 }: StoreProviderProps): JSX.Element => {
+	const [location, setLocation] = useState<string>("/");
+
+	const store: Store = {
+		location,
+		setLocation,
+	};
+
 	return (
 		<>
 			<StoreContext.Provider value={store}>{children}</StoreContext.Provider>
