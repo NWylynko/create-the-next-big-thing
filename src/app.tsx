@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, Box } from "ink";
-import { ListedItem } from "ink-multi-select";
 
 import { Route, usePage } from "./PageManager";
+import { ProgressBar } from "./ProgressBar";
+import { useDataStore } from "./AppDataStore"
 
 import SelectPackageManager from "./pages/SelectPackageManager";
 import InputProjectName from "./pages/InputProjectName";
@@ -19,54 +20,54 @@ export interface AppProps {
 const App = (_props: AppProps) => {
 	const { setLocation } = usePage();
 
-	const [projectName, setProjectName] = useState<string>();
-	const [packageManager, setPackageManger] = useState<ListedItem>();
-	const [target, setTarget] = useState<ListedItem>();
-	const [language, setLanguage] = useState<ListedItem>();
-
-	const values = [projectName, packageManager?.label, target?.label, language?.label];
-
 	return (
 		<>
 			<Box marginTop={1} marginLeft={2} flexDirection="row">
 				<Text color="green"> / </Text>
-				<BreadCrumbs values={values} />
+				<BreadCrumbs />
 			</Box>
 			<Route path="project-name">
 				<InputProjectName
-					onSubmit={(name) => {
-						setProjectName(name);
+					onSubmit={() => {
 						setLocation("package-manager");
 					}}
 				/>
 			</Route>
 			<Route path="package-manager">
 				<SelectPackageManager
-					onSubmit={(pm) => {
-						setPackageManger(pm);
-						setLocation('target');
+					onFinish={() => {
+						setLocation("target");
 					}}
 				/>
 			</Route>
 			<Route path="target">
-				<SelectTarget onSubmit={(target) => {
-					setTarget(target);
-					setLocation('language');
-				}}/>
+				<SelectTarget
+					onFinish={() => {
+						setLocation("language");
+					}}
+				/>
 			</Route>
 			<Route path="language">
-				<SelectLanguage onSubmit={(lang) => {
-					setLanguage(lang)
-				}} />
+				<SelectLanguage
+					onFinish={() => {
+						// 
+					}}
+				/>
 			</Route>
+			<Box borderStyle="round" borderColor="red">
+				<ProgressBar left={1} right={1} />
+			</Box>
 		</>
 	);
 };
 
-const BreadCrumbs = ({ values }: { values: (string | undefined)[] }) => {
+const BreadCrumbs = () => {
+
+	const { breadCrumbsArray } = useDataStore()
+
 	return (
 		<>
-			{values.map((value, i) => {
+			{breadCrumbsArray.map((value, i) => {
 				if (value !== undefined) {
 					return (
 						<Box key={i}>

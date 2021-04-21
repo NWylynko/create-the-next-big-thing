@@ -1,49 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { Text, Box } from "ink";
-import MultiSelect, { ListedItem } from "ink-multi-select";
 import Spinner from "ink-spinner";
+import SelectInput from "ink-select-input";
 
-import packageManagers from "./packageManagers.json";
 import { isAvailable } from "../../utils/isAvailable";
+import { addTask } from "../../jobQueue";
+import { initPackageManager } from "../../actions";
+import ErrorText from "../../components/ErrorText";
+import Layout from "../../components/Layout";
 
-interface Props {
-	onSubmit: (item: ListedItem) => void;
-}
+import { useDataStore } from "../../AppDataStore"
+import { PageProps } from "../types"
 
-export const SelectPackageManager = ({ onSubmit }: Props) => {
-	const [item, setItem] = useState<ListedItem>();
-	const [items, setItems] = useState<ListedItem[] | undefined>();
+import packageManagers from "./packageManagers";
+import type { PackageManager } from "./packageManagers"
+
+export const SelectPackageManager = ({ onFinish }: PageProps) => {
+	const [items, setItems] = useState<PackageManager[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
+
+	const { projectDir, setPackageManager } = useDataStore()
 
 	useEffect(() => {
 		(async () => {
 			const packageManagersWithAvailability = await Promise.all(
 				packageManagers.map(async (packageManager) => ({
 					...packageManager,
-					isAvailable: await isAvailable(packageManager.name),
+					isAvailable: await addTask(() => isAvailable(packageManager.value.name)),
 				}))
 			);
 
-			let i: ListedItem[] = [];
+			let i: PackageManager[] = [];
 
-			packageManagersWithAvailability.forEach(({ isAvailable, label, name }) => {
-				if (isAvailable) {
-					i.push({
-						label,
-						value: name,
-					});
+			packageManagersWithAvailability.forEach((packageManager) => {
+				if (packageManager.isAvailable) {
+					i.push(packageManager);
 				}
 			});
 
-			if (i.length !== 0) {
-				setItems(i);
-				const firstItem: ListedItem = i[0] || {
-					label: "Error: no package manager installed",
-					value: "error",
-				};
-				setItem(firstItem);
-			}
-
+			setItems(i);
 			setLoading(false);
 		})();
 	}, []);
@@ -57,32 +52,37 @@ export const SelectPackageManager = ({ onSubmit }: Props) => {
 		);
 	}
 
-	if (!item) {
-		return (
-			<Box margin={2}>
-				<Text color="red">Error: no package manager installed</Text>
-			</Box>
-		);
+	if (items.length === 0) {
+		return <ErrorText>no package manager installed</ErrorText>;
 	}
 
 	return (
-		<Box margin={1} flexDirection="column">
-			<Text>Please select a Package Manager to use for the project</Text>
-			<Text dimColor>
-				(use arrows to go up/down, space to select, return to confirm)
-			</Text>
-			<Box margin={1}>
-				<MultiSelect
-					items={items}
-					onSelect={setItem}
-					selected={[item]}
-					onSubmit={(items) => {
-						if (items && items[0]) {
-							onSubmit(items[0]);
-						}
-					}}
-				/>
-			</Box>
-		</Box>
+		<Layout
+			title="Please select a Package Manager to use for the project"
+			instructions="use arrows to go up/down, return to select"
+		>
+			<SelectInput
+				items={items}
+				onSelect={(pm) => {
+					const packageManager:
+						| PackageManager
+						| undefined = packageManagers.find(
+						({ label }) => label === pm.label
+					);
+
+					if (packageManager === undefined) {
+						return;
+					}
+
+					const { name, use } = packageManager.value
+
+					addTask(() => initPackageManager(projectDir, name, use.init));
+
+					setPackageManager(pm)
+
+					onFinish()
+				}}
+			/>
+		</Layout>
 	);
 };

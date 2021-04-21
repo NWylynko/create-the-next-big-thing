@@ -726,11 +726,6 @@ bl@^4.0.3:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-blacklist@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/blacklist/-/blacklist-1.1.4.tgz#b2dd09d6177625b2caa69835a37b28995fa9a2f2"
-  integrity sha1-st0J1hd2JbLKppg1o3somV+povI=
-
 blueimp-md5@^2.10.0:
   version "2.18.0"
   resolved "https://registry.yarnpkg.com/blueimp-md5/-/blueimp-md5-2.18.0.tgz#1152be1335f0c6b3911ed9e36db54f3e6ac52935"
@@ -2745,13 +2740,11 @@ ink-multi-select@^2.0.0:
     lodash.isequal "^4.5.0"
     prop-types "^15.5.10"
 
-ink-progress-bar@^3.0.0:
+"ink-progress-bar@https://github.com/NWylynko/ink-progress-bar-typescript.git":
   version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ink-progress-bar/-/ink-progress-bar-3.0.0.tgz#e1cb86955355054e194361b8cb80f57124a9b203"
-  integrity sha512-GzByB3uEofqjyWC3VmdhYpBq+kzszu5Nwt/NruTDWa7fbw1E6sx6U1n6Kcsfj9D3qwR17dtC5w9uFVMyRA5HZw==
+  resolved "https://github.com/NWylynko/ink-progress-bar-typescript.git#f0bc6f1a21c8661c724613f084b16bc6f11e5ad7"
   dependencies:
-    blacklist "^1.1.4"
-    prop-types "^15.7.2"
+    source-map-support "^0.5.19"
 
 ink-quicksearch-input@^1.0.0:
   version "1.0.0"

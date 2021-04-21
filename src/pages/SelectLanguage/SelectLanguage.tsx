@@ -1,61 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { Text, Box } from "ink";
-import MultiSelect, { ListedItem } from "ink-multi-select";
+import React from "react";
+import SelectInput from "ink-select-input";
 
-import languages from "./languages.json";
+import { useDataStore } from "../../AppDataStore"
 
-interface Props {
-	onSubmit: (language: ListedItem) => void;
-}
+import ErrorText from "../../components/ErrorText";
+import Layout from "../../components/Layout";
+import { PageProps } from "../types"
 
-export const SelectLanguage = ({ onSubmit }: Props) => {
-	const [item, setItem] = useState<ListedItem>();
-	const [items, setItems] = useState<ListedItem[] | undefined>();
+import languages from "./languages";
 
-	useEffect(() => {
-		(async () => {
-			const i: ListedItem[] = languages.map(({ name, label }) => {
-					return ({
-						label,
-						value: name,
-					});
-			});
+export const SelectLanguage = ({ onFinish }: PageProps) => {
 
-			setItems(i)
-			const firstItem: ListedItem = i[0] || {
-				label: "Error: no languages available",
-				value: "error",
-			};
-			setItem(firstItem);
-		})();
-	}, []);
+	const { setLanguage } = useDataStore();
 
-	if (!item) {
-		return (
-			<Box margin={2}>
-				<Text color="red">Error: no languages available</Text>
-			</Box>
-		);
+	if (languages.length === 0) {
+		return <ErrorText>no languages available</ErrorText>;
 	}
 
 	return (
-		<Box margin={1} flexDirection="column">
-			<Text>Please select a language to use for the project</Text>
-			<Text dimColor>
-				(use arrows to go up/down, space to select, return to confirm)
-			</Text>
-			<Box margin={1}>
-				<MultiSelect
-					items={items}
-					onSelect={setItem}
-					selected={[item]}
-					onSubmit={(items) => {
-						if (items && items[0]) {
-							onSubmit(items[0]);
-						}
-					}}
-				/>
-			</Box>
-		</Box>
+		<Layout
+			title="Please select a language to use for the project"
+			instructions="use arrows to go up/down, return to select"
+		>
+			<SelectInput items={languages} onSelect={(language) => {
+				setLanguage(language)
+				onFinish()
+			}} />
+		</Layout>
 	);
 };

@@ -1,60 +1,53 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Text, Box } from "ink";
-import MultiSelect, { ListedItem } from "ink-multi-select";
+import SelectInput from "ink-select-input";
 
-import targets from "./targets.json";
+import ErrorText from "../../components/ErrorText";
 
-interface Props {
-	onSubmit: (target: ListedItem) => void;
-}
+import targets from "./targets";
+import { addTask } from "../../jobQueue";
+import { PageProps } from "../types";
+import { useDataStore } from "../../AppDataStore";
 
-export const SelectTarget = ({ onSubmit }: Props) => {
-	const [item, setItem] = useState<ListedItem>();
-	const [items, setItems] = useState<ListedItem[] | undefined>();
+export const SelectTarget = ({ onFinish }: PageProps) => {
+	const [showSecondSelection, setShowSecondSelection] = useState(false);
 
-	useEffect(() => {
-		(async () => {
-			const i: ListedItem[] = targets.map(({ name, label }) => {
-					return ({
-						label,
-						value: name,
-					});
-			});
+	const { target, setTarget, setVersion, projectDir } = useDataStore();
 
-			setItems(i)
-			const firstItem: ListedItem = i[0] || {
-				label: "Error: no targets available",
-				value: "error",
-			};
-			setItem(firstItem);
-		})();
-	}, []);
-
-	if (!item) {
-		return (
-			<Box margin={2}>
-				<Text color="red">Error: no languages available</Text>
-			</Box>
-		);
+	if (targets.length === 0) {
+		return <ErrorText>no targets available</ErrorText>;
 	}
 
 	return (
 		<Box margin={1} flexDirection="column">
 			<Text>Please select the target for the project</Text>
-			<Text dimColor>
-				(use arrows to go up/down, space to select, return to confirm)
-			</Text>
+			<Text dimColor>(use arrows to go up/down, return to select)</Text>
 			<Box margin={1}>
-				<MultiSelect
-					items={items}
-					onSelect={setItem}
-					selected={[item]}
-					onSubmit={(items) => {
-						if (items && items[0]) {
-							onSubmit(items[0]);
+				<SelectInput
+					isFocused={!showSecondSelection}
+					items={targets}
+					onSelect={(selectedTarget) => {
+						setTarget(selectedTarget);
+						if (selectedTarget.value.versions !== undefined) {
+							setShowSecondSelection(true);
+						} else {
+							onFinish();
 						}
 					}}
 				/>
+				{showSecondSelection && (
+					<SelectInput
+						isFocused={showSecondSelection}
+						items={target?.value.versions}
+						onSelect={(version) => {
+							setVersion(version);
+							version.value.actions?.forEach((action) => {
+								addTask(() => action(projectDir, version.value.name))
+							})
+							onFinish();
+						}}
+					/>
+				)}
 			</Box>
 		</Box>
 	);

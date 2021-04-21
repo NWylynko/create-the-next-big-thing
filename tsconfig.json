@@ -5,6 +5,7 @@
 		"esModuleInterop": true,
 		"outDir": "dist",
 		"sourceMap": true,
+		"declaration": true
 	},
 	"include": ["src"],
 	"exclude": ["src/**/*.test.tsx"]
